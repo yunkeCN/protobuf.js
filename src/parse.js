@@ -4,27 +4,27 @@ module.exports = parse;
 parse.filename = null;
 parse.defaults = { keepCase: false };
 
-var tokenize = require("./tokenize"),
-    Root = require("./root"),
-    Type = require("./type"),
-    Field = require("./field"),
-    MapField = require("./mapfield"),
-    OneOf = require("./oneof"),
-    Enum = require("./enum"),
-    Service = require("./service"),
-    Method = require("./method"),
-    types = require("./types"),
-    util = require("./util");
+var tokenize  = require("./tokenize"),
+    Root      = require("./root"),
+    Type      = require("./type"),
+    Field     = require("./field"),
+    MapField  = require("./mapfield"),
+    OneOf     = require("./oneof"),
+    Enum      = require("./enum"),
+    Service   = require("./service"),
+    Method    = require("./method"),
+    types     = require("./types"),
+    util      = require("./util");
 
-var base10Re = /^[1-9][0-9]*$/,
+var base10Re    = /^[1-9][0-9]*$/,
     base10NegRe = /^-?[1-9][0-9]*$/,
-    base16Re = /^0[x][0-9a-fA-F]+$/,
+    base16Re    = /^0[x][0-9a-fA-F]+$/,
     base16NegRe = /^-?0[x][0-9a-fA-F]+$/,
-    base8Re = /^0[0-7]+$/,
-    base8NegRe = /^-?0[0-7]+$/,
-    numberRe = /^(?![eE])[0-9]*(?:\.[0-9]*)?(?:[eE][+-]?[0-9]+)?$/,
-    nameRe = /^[a-zA-Z_][a-zA-Z_0-9]*$/,
-    typeRefRe = /^(?:\.?[a-zA-Z_][a-zA-Z_0-9]*)(?:\.[a-zA-Z_][a-zA-Z_0-9]*)*$/,
+    base8Re     = /^0[0-7]+$/,
+    base8NegRe  = /^-?0[0-7]+$/,
+    numberRe    = /^(?![eE])[0-9]*(?:\.[0-9]*)?(?:[eE][+-]?[0-9]+)?$/,
+    nameRe      = /^[a-zA-Z_][a-zA-Z_0-9]*$/,
+    typeRefRe   = /^(?:\.?[a-zA-Z_][a-zA-Z_0-9]*)(?:\.[a-zA-Z_][a-zA-Z_0-9]*)*$/,
     fqTypeRefRe = /^(?:\.[a-zA-Z_][a-zA-Z_0-9]*)+$/;
 
 /**
@@ -86,7 +86,7 @@ function parse(source, root, options) {
 
     var ptr = root;
 
-    var applyCase = options.keepCase ? function (name) { return name; } : util.camelCase;
+    var applyCase = options.keepCase ? function(name) { return name; } : util.camelCase;
 
     /* istanbul ignore next */
     function illegal(token, name, insideTryCatch) {
@@ -153,7 +153,7 @@ function parse(source, root, options) {
             if (acceptStrings && ((token = peek()) === "\"" || token === "'"))
                 target.push(readString());
             else
-                target.push([start = parseId(next()), skip("to", true) ? parseId(next()) : start]);
+                target.push([ start = parseId(next()), skip("to", true) ? parseId(next()) : start ]);
         } while (skip(",", true));
         skip(";");
     }
@@ -238,7 +238,7 @@ function parse(source, root, options) {
                 break;
             case "public":
                 next();
-            // eslint-disable-line no-fallthrough
+                // eslint-disable-line no-fallthrough
             default:
                 whichImports = imports || (imports = []);
                 break;
@@ -290,8 +290,8 @@ function parse(source, root, options) {
     function ifBlock(obj, fnIf, fnElse) {
         var trailingLine = tn.line;
         if (obj) {
-            if (typeof obj.comment !== "string") {
-                obj.comment = cmnt(); // try block-type comment
+            if(typeof obj.comment !== "string") {
+              obj.comment = cmnt(); // try block-type comment
             }
             obj.filename = parse.filename;
         }
@@ -435,7 +435,7 @@ function parse(source, root, options) {
             }
         });
         parent.add(type)
-            .add(field);
+              .add(field);
     }
 
     function parseMapField(parent) {
@@ -504,19 +504,19 @@ function parse(source, root, options) {
 
         var enm = new Enum(token);
         ifBlock(enm, function parseEnum_block(token) {
-            switch (token) {
-                case "option":
-                    parseOption(enm, token);
-                    skip(";");
-                    break;
+          switch(token) {
+            case "option":
+              parseOption(enm, token);
+              skip(";");
+              break;
 
-                case "reserved":
-                    readRanges(enm.reserved || (enm.reserved = []), true);
-                    break;
+            case "reserved":
+              readRanges(enm.reserved || (enm.reserved = []), true);
+              break;
 
-                default:
-                    parseEnumValue(enm, token);
-            }
+            default:
+              parseEnumValue(enm, token);
+          }
         });
         parent.add(enm);
     }
@@ -777,11 +777,11 @@ function parse(source, root, options) {
 
     parse.filename = null;
     return {
-        "package": pkg,
-        "imports": imports,
-        weakImports: weakImports,
-        syntax: syntax,
-        root: root
+        "package"     : pkg,
+        "imports"     : imports,
+         weakImports  : weakImports,
+         syntax       : syntax,
+         root         : root
     };
 }
 
