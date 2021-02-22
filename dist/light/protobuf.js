@@ -1,6 +1,6 @@
 /*!
- * protobuf.js v1.0.3 (c) 2016, daniel wirtz
- * compiled mon, 22 feb 2021 06:16:15 utc
+ * protobuf.js v1.0.6 (c) 2016, daniel wirtz
+ * compiled mon, 22 feb 2021 08:35:38 utc
  * licensed under the bsd-3-clause license
  * see: https://github.com/dcodeio/protobuf.js for details
  */
@@ -4225,14 +4225,14 @@ Root.prototype.load = function load(filename, options, callback) {
     }
 
     // Bundled definition existence checking
-    function getBundledFileName(filename) {
-        var idx = filename.lastIndexOf("google/protobuf/");
-        if (idx > -1) {
-            var altname = filename.substring(idx);
-            if (altname in common) return altname;
-        }
-        return null;
-    }
+    // function getBundledFileName(filename) {
+    //     var idx = filename.lastIndexOf("google/protobuf/");
+    //     if (idx > -1) {
+    //         var altname = filename.substring(idx);
+    //         if (altname in common) return altname;
+    //     }
+    //     return null;
+    // }
 
     // Processes a single file
     function process(filename, source) {
@@ -4248,11 +4248,11 @@ Root.prototype.load = function load(filename, options, callback) {
                     i = 0;
                 if (parsed.imports)
                     for (; i < parsed.imports.length; ++i)
-                        if (resolved = getBundledFileName(parsed.imports[i]) || self.resolvePath(filename, parsed.imports[i]))
+                        if (resolved = self.resolvePath(filename, parsed.imports[i]))
                             fetch(resolved);
                 if (parsed.weakImports)
                     for (i = 0; i < parsed.weakImports.length; ++i)
-                        if (resolved = getBundledFileName(parsed.weakImports[i]) || self.resolvePath(filename, parsed.weakImports[i]))
+                        if (resolved = self.resolvePath(filename, parsed.weakImports[i]))
                             fetch(resolved, true);
             }
         } catch (err) {
@@ -4264,6 +4264,14 @@ Root.prototype.load = function load(filename, options, callback) {
 
     // Fetches a single file
     function fetch(filename, weak) {
+
+        // Strip path if this file references a bundled definition
+        var idx = filename.lastIndexOf("google/protobuf/");
+        if (idx > -1) {
+            var altname = filename.substring(idx);
+            if (altname in common)
+                filename = altname;
+        }
 
         // Skip if already loaded / attempted
         if (self.files.indexOf(filename) > -1)
