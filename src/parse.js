@@ -111,6 +111,14 @@ function parse(source, root, options) {
         return values.join("");
     }
 
+    function readValueOfArray() {
+        var values = [], token;
+        do {
+            values.push(token = next());
+        } while (token !== "]");
+        return values.join("");
+    }
+
     function readValue(acceptTypeRef) {
         var token = next();
         switch (token) {
@@ -122,6 +130,9 @@ function parse(source, root, options) {
                 return true;
             case "false": case "FALSE":
                 return false;
+            case "[":
+                push(token);
+                return readValueOfArray();
         }
         try {
             return parseNumber(token, /* insideTryCatch */ true);
